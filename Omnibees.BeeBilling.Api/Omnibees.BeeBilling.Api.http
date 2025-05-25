@@ -1,0 +1,6 @@
+@Omnibees.BeeBilling.Api_HostAddress = http://localhost:5137
+
+GET {{Omnibees.BeeBilling.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

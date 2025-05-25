@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omnibees.BeeBilling.Application", "Omnibees.BeeBilling.Application\Omnibees.BeeBilling.Application.csproj", "{44398D48-6F83-4B7B-A4FD-7A4BBC7A6B38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omnibees.BeeBilling.Api", "Omnibees.BeeBilling.Api\Omnibees.BeeBilling.Api.csproj", "{45A9B502-830E-4099-9759-D61637DE6B5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omnibees.BeeBilling.Domain", "Omnibees.BeeBilling.Domain\Omnibees.BeeBilling.Domain.csproj", "{881AB564-F4ED-4D0C-BE30-6773AB03B4F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omnibees.BeeBilling.Infrastructure", "Omnibees.BeeBilling.Infrastructure\Omnibees.BeeBilling.Infrastructure.csproj", "{285E07DE-3DFF-44C9-8F4E-D0948661A8F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omnibees.BeeBilling.Tests", "Omnibees.BeeBilling.Tests\Omnibees.BeeBilling.Tests.csproj", "{B9001A03-E726-4530-BA1E-3751C4C9A7A0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F82E2B5C-5FE5-42DF-A330-BDD52014D1E6}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		docker-compose.yml = docker-compose.yml
+		Omnibees.BeeBilling.Api\Dockerfile = Omnibees.BeeBilling.Api\Dockerfile
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44398D48-6F83-4B7B-A4FD-7A4BBC7A6B38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44398D48-6F83-4B7B-A4FD-7A4BBC7A6B38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44398D48-6F83-4B7B-A4FD-7A4BBC7A6B38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44398D48-6F83-4B7B-A4FD-7A4BBC7A6B38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45A9B502-830E-4099-9759-D61637DE6B5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45A9B502-830E-4099-9759-D61637DE6B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45A9B502-830E-4099-9759-D61637DE6B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45A9B502-830E-4099-9759-D61637DE6B5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{881AB564-F4ED-4D0C-BE30-6773AB03B4F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{881AB564-F4ED-4D0C-BE30-6773AB03B4F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{881AB564-F4ED-4D0C-BE30-6773AB03B4F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{881AB564-F4ED-4D0C-BE30-6773AB03B4F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{285E07DE-3DFF-44C9-8F4E-D0948661A8F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{285E07DE-3DFF-44C9-8F4E-D0948661A8F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{285E07DE-3DFF-44C9-8F4E-D0948661A8F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{285E07DE-3DFF-44C9-8F4E-D0948661A8F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9001A03-E726-4530-BA1E-3751C4C9A7A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9001A03-E726-4530-BA1E-3751C4C9A7A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9001A03-E726-4530-BA1E-3751C4C9A7A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9001A03-E726-4530-BA1E-3751C4C9A7A0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
