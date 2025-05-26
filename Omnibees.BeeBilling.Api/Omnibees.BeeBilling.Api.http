@@ -1,6 +1,11 @@
 @Omnibees.BeeBilling.Api_HostAddress = http://localhost:5137
 
-GET {{Omnibees.BeeBilling.Api_HostAddress}}/weatherforecast/
+GET {{Omnibees.BeeBilling.Api_HostAddress}}/api/healthcheck/api-status
+Accept: application/json
+
+###
+
+GET {{Omnibees.BeeBilling.Api_HostAddress}}/api/healthcheck/database-status
 Accept: application/json
 
 ###

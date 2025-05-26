@@ -9,6 +9,10 @@ namespace Omnibees.BeeBilling.Infrastructure.Persistence.Context
         public DbSet<FaixaIdade> FaixasIdade => Set<FaixaIdade>();
         public DbSet<Parentesco> Parentescos => Set<Parentesco>();
         public DbSet<Produto> Produtos => Set<Produto>();
+        public DbSet<Parceiro> Parceiros => Set<Parceiro>();
+        public DbSet<Cotacao> Cotacoes => Set<Cotacao>();
+        public DbSet<CotacaoBeneficiario> CotacoesBeneficiario => Set<CotacaoBeneficiario>();
+        public DbSet<CotacaoCobertura> CotacoesCobertura => Set<CotacaoCobertura>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -9,6 +9,10 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
     {
         private readonly HealthCheckService _service = service;
 
+        /// <summary>
+        /// Endpoint para verificar se a API está operando normalmente e pronta para receber requisições.
+        /// </summary>
+        /// <returns>Retorna status 200 com mensagem de operação normal e timestamp da verificação.</returns>
         [HttpGet("api-status")]
         public IActionResult HealthCheckAPI()
         {
@@ -19,6 +23,13 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
             });
         }
 
+        /// <summary>
+        /// Endpoint para verificar a saúde da conexão com o banco de dados, utilizando os health checks configurados.
+        /// </summary>
+        /// <returns>
+        /// Retorna status 200 caso o banco esteja saudável, 503 se indisponível, ou 500 em caso de erro inesperado.
+        /// Inclui detalhes do status, duração da verificação e timestamp.
+        /// </returns>
         [HttpGet("database-status")]
         public async Task<IActionResult> HealthCheckDB()
         {

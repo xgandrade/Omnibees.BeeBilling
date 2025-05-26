@@ -4,6 +4,10 @@ namespace Omnibees.BeeBilling.Infrastructure.Persistence.Seed.Configuration
 {
     public static class DbInitializer
     {
+        /// <summary>
+        /// Executa os seeders para popular os dados iniciais essenciais no banco de dados.
+        /// </summary>
+        /// <param name="context">Contexto do banco de dados onde os dados serão inseridos.</param>
         public static void Seed(BeeBillingDbContext context)
         {
             try
@@ -12,6 +16,7 @@ namespace Omnibees.BeeBilling.Infrastructure.Persistence.Seed.Configuration
                 new FaixaIdadeDataInitializer().Initialize(context);
                 new ParentescoDataInitializer().Initialize(context);
                 new ProdutoDataInitializer().Initialize(context);
+                new ParceiroDataInitializer().Initialize(context);
             }
             catch (Exception ex)
             {
