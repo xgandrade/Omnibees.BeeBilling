@@ -28,15 +28,18 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
-      - name: Executar testes
+      - name: Run Tests
         run: |
           mkdir -p ./reports/
           dotnet test --no-build --configuration Release --logger "trx;LogFileName=test-results.trx" --results-directory ./reports/
 
-      - name: Publicar resultados dos testes
+      - name: Listar arquivos na pasta reports
+        run: ls -l ./reports
+
+      - name: Publish Test Results
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Test Results
-          path: ./reports/test-results.trx
+          path: ./reports/**/*.trx
           reporter: dotnet-trx
