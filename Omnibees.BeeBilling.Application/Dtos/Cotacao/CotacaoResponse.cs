@@ -29,7 +29,6 @@
     public class CotacaoBeneficiarioResponse
     {
         public string Nome { get; set; } = null!;
-        public string Documento { get; set; } = null!;
-        public DateOnly Nascimento { get; set; }
+        public decimal Percentual { get; set; }
     }
 }

@@ -82,20 +82,22 @@ namespace Omnibees.BeeBilling.Domain.Entities
 
         public void RecalcularPremio() => Premio = Coberturas.Sum(c => c.ValorTotal);
 
-        public void AdicionarCobertura(Cobertura cobertura, decimal percDesconto, decimal percAgravo)
+        public void AdicionarCoberturas(List<Cobertura> coberturas)
         {
-            if (Coberturas.Any(c => c.IdCobertura == cobertura.Id))
-                throw new InvalidOperationException("Cobertura já adicionada.");
-
-            var nova = new CotacaoCobertura
+            foreach (var cobertura in coberturas)
             {
-                IdCobertura = cobertura.Id,
-                Cobertura = cobertura,
-                Cotacao = this
-            };
+                if (Coberturas.Any(c => c.IdCobertura == cobertura.Id))
+                    throw new InvalidOperationException($"Cobertura {cobertura.Descricao} já adicionada.");
 
-            nova.CalcularValores(percDesconto, percAgravo);
-            Coberturas.Add(nova);
+                var cotacaoCobertura = new CotacaoCobertura
+                {
+                    IdCobertura = cobertura.Id,
+                    Cobertura = cobertura,
+                    Cotacao = this
+                };
+
+                Coberturas.Add(cotacaoCobertura);
+            }
 
             ValidarCoberturas();
             RecalcularPremio();

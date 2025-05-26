@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Omnibees.BeeBilling.Application.Dtos.Cotacao;
 using Omnibees.BeeBilling.Application.Interfaces;
+using Omnibees.BeeBilling.Domain.Entities;
 
 namespace Omnibees.BeeBilling.Api.Controllers.V1
 {
@@ -9,11 +11,13 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
     [Route("api/v{version:apiVersion}/[controller]")]
     public class CotacaoController(
         ICotacaoSeguroVidaService cotacaoService,
-        IParceiroService parceiroService
+        IParceiroService parceiroService,
+        IMapper mapper
     ) : ControllerBase
     {
         private readonly ICotacaoSeguroVidaService _cotacaoService = cotacaoService;
         private readonly IParceiroService _parceiroService = parceiroService;
+        private readonly IMapper _mapper = mapper;
 
         [HttpPost]
         public async Task<IActionResult> GerarCotacao([FromHeader(Name = "secret")] string secret, [FromBody] CotacaoRequest request)
@@ -29,7 +33,11 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
                 return Unauthorized("Secret inválido.");
             }
 
-            var response = await _cotacaoService.GerarAsync(request, idParceiro);
+            Cotacao cotacao = _mapper.Map<Cotacao>(request);
+            cotacao.IdParceiro = idParceiro;
+
+            var response = await _cotacaoService.GerarAsync(cotacao);
+
             return Ok(response);
         }
 

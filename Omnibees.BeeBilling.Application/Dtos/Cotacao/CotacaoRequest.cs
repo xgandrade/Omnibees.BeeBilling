@@ -16,15 +16,14 @@
 
     public class CotacaoCoberturaRequest
     {
-        public int IdCobertura { get; set; }
-        public decimal PercDesconto { get; set; }
-        public decimal PercAgravo { get; set; }
+        public decimal ValorDesconto { get; set; }
+        public decimal ValorAgravo { get; set; }
+        public decimal ValorTotal { get; set; }
     }
 
     public class CotacaoBeneficiarioRequest
     {
         public string Nome { get; set; } = null!;
-        public string Documento { get; set; } = null!;
-        public DateOnly Nascimento { get; set; }
+        public decimal Percentual { get; set; }
     }
 }

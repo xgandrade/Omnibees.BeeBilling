@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+                     using Microsoft.EntityFrameworkCore;
 using Omnibees.BeeBilling.Api.Extensions;
 using Omnibees.BeeBilling.Application.Extensions;
+using Omnibees.BeeBilling.Application.Mappers;
 using Omnibees.BeeBilling.Infrastructure.Extensions;
 using Omnibees.BeeBilling.Infrastructure.Persistence.Context;
 using Omnibees.BeeBilling.Infrastructure.Persistence.Seed.Configuration;
@@ -19,6 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureRepositories();
 builder.Services.AddApplicationServices();
 builder.Services.AddApiVersioningSupport();
+builder.Services.AddAutoMapper(typeof(CotacaoProfile));
 builder.Services
     .AddHealthChecks()
     .AddSqlServer(

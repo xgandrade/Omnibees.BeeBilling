@@ -12,8 +12,10 @@ namespace Omnibees.BeeBilling.Domain.Entities
         public decimal ValorAgravo { get; set; }
         public decimal ValorTotal { get; set; }
 
+        #region [Virtuals]
         public virtual Cotacao Cotacao { get; set; }
         public virtual Cobertura Cobertura { get; set; }
+        #endregion
 
         public void CalcularValores(decimal percDesconto, decimal percAgravo)
         {

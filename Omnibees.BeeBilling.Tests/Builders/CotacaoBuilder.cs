@@ -1,0 +1,61 @@
+﻿using Omnibees.BeeBilling.Domain.Entities;
+using Omnibees.BeeBilling.Domain.Entities.Enums;
+
+namespace Omnibees.BeeBilling.Tests.Builders
+{
+    public class CotacaoBuilder
+    {
+        private readonly Cotacao _cotacao;
+
+        public CotacaoBuilder()
+        {
+            _cotacao = new Cotacao
+            {
+                NomeSegurado = "Fulano de Tal",
+                Documento = "12345678900",
+                Nascimento = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-30)),
+                DataCriacao = DateTime.UtcNow,
+                DataAtualizacao = DateTime.UtcNow,
+                IdProduto = 1,
+                IdParceiro = 1,
+                Endereco = "Rua das Flores, 123",
+                CEP = "12345-678",
+                Premio = 10,
+                ImportanciaSegurada = 100_000
+            };
+        }
+
+        public CotacaoBuilder ComCoberturasValidas()
+        {
+            List<Cobertura> coberturas =
+            [
+                new ()
+                {
+                    Id = 1,
+                    Descricao = "Cobertura Básica",
+                    Tipo = TipoCobertura.Basica,
+                    Valor = 1000
+                },
+                new () 
+                {
+                    Id = 2,
+                    Descricao = "Cobertura Adicional",
+                    Tipo = TipoCobertura.Adicional,
+                    Valor = 500
+                }
+            ];
+
+            _cotacao.AdicionarCoberturas(coberturas);
+
+            return this;
+        }
+
+        public CotacaoBuilder ComNome(string nome)
+        {
+            _cotacao.NomeSegurado = nome;
+            return this;
+        }
+
+        public Cotacao Build() => _cotacao;
+    }
+}
