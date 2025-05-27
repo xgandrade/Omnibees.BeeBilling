@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Omnibees.BeeBilling.Application.Interfaces;
 using Omnibees.BeeBilling.Infrastructure.Persistence.Context;
 
 namespace Omnibees.BeeBilling.Application.Implementations
 {
-    public class ParceiroService(BeeBillingDbContext beeBillingDbContext) : IParceiroService
+    public class ParceiroService(BeeBillingDbContext beeBillingDbContext)
     {
         private readonly BeeBillingDbContext _beeBillingDbContext = beeBillingDbContext;
 

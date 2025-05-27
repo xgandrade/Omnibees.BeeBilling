@@ -1,85 +1,107 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Omnibees.BeeBilling.Application.Dtos.Cotacao;
-using Omnibees.BeeBilling.Application.Interfaces;
 using Omnibees.BeeBilling.Domain.Entities;
-using Omnibees.BeeBilling.Infrastructure.Persistence.Context;
+using Omnibees.BeeBilling.Domain.Interfaces;
 
 namespace Omnibees.BeeBilling.Application.Implementations
 {
-    public class CotacaoSeguroVidaService(BeeBillingDbContext beeBillingDbContext, IMapper mapper) : ICotacaoSeguroVidaService
+    public class CotacaoSeguroVidaService(IMapper mapper, ICotacaoRepository cotacaoRepository)
     {
-        private readonly BeeBillingDbContext _beeBillingDbContext = beeBillingDbContext;
         private readonly IMapper _mapper = mapper;
+        private readonly ICotacaoRepository _cotacaoRepository = cotacaoRepository;
 
         public async Task<CotacaoResponse> AlterarAsync(int id, CotacaoRequest request, int idParceiro)
         {
-            var cotacao = await _beeBillingDbContext.Cotacoes
-                .Include(c => c.Coberturas)
-                .ThenInclude(cc => cc.Cobertura)
-                .FirstOrDefaultAsync(c => c.Id == id && c.IdParceiro == idParceiro);
+            var cotacao = await _cotacaoRepository.ObterComRelacionamentosPorIdAsync(id, idParceiro);
 
-            if (cotacao == null)
+            if (cotacao is null)
                 throw new KeyNotFoundException("Cotação não encontrada.");
 
-            cotacao.NomeSegurado = request.NomeSegurado;
-            cotacao.Documento = request.Documento;
-            AdicionarCoberturasComFaixaIdade(cotacao);
+            _mapper.Map(request, cotacao);
 
-            await _beeBillingDbContext.SaveChangesAsync();
-
-            return _mapper.Map<CotacaoResponse>(cotacao);
-        }
-
-        public async Task<CotacaoResponse?> DetalharAsync(int id, int idParceiro)
-        {
-            var cotacao = await _beeBillingDbContext.Cotacoes
-                .Include(c => c.Coberturas)
-                .ThenInclude(cc => cc.Cobertura)
-                .FirstOrDefaultAsync(c => c.Id == id && c.IdParceiro == idParceiro);
-
-            if (cotacao == null) return null;
+            await AdicionarCoberturasComFaixaIdadeAsync(cotacao);
+            await _cotacaoRepository.SaveChangesAsync();
 
             return _mapper.Map<CotacaoResponse>(cotacao);
         }
 
-        public Task ExcluirAsync(int id, int idParceiro)
+        public async Task<CotacaoDetalhesResponse?> DetalharCotacaoAsync(int id, int idParceiro)
         {
-            throw new NotImplementedException();
+            var cotacao = await _cotacaoRepository.ObterComRelacionamentosPorIdAsync(id, idParceiro);
+            return cotacao is null ? null : _mapper.Map<CotacaoDetalhesResponse>(cotacao);
+        }
+
+        public async Task<bool> ExcluirAsync(int id, int idParceiro)
+        {
+            var cotacao = await _cotacaoRepository.ObterPorIdAsync(id, idParceiro);
+            if (cotacao is null)
+                return false;
+
+            await _cotacaoRepository.RemoverAsync(cotacao);
+            await _cotacaoRepository.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<CotacaoResponse> GerarAsync(Cotacao cotacao)
         {
-            cotacao.ValidarCoberturas();
-            AdicionarCoberturasComFaixaIdade(cotacao);
-            cotacao.RecalcularPremio();
+            await AdicionarCoberturasComFaixaIdadeAsync(cotacao);
+            await AdicionarBeneficiariosAsync(cotacao);
 
-            _beeBillingDbContext.Cotacoes.Add(cotacao);
-            await _beeBillingDbContext.SaveChangesAsync();
+            await _cotacaoRepository.AdicionarAsync(cotacao);
+            await _cotacaoRepository.SaveChangesAsync();
 
-            var resp = _mapper.Map<CotacaoResponse>(cotacao);
-            return resp;
+            return _mapper.Map<CotacaoResponse>(cotacao);
         }
 
-        public Task<IEnumerable<CotacaoResponse>> ListarAsync(int idParceiro)
+        public async Task<IEnumerable<CotacaoResponse>> ListarCotacoesAsync(int idParceiro)
         {
-            throw new NotImplementedException();
+            var cotacoes = await _cotacaoRepository.ListarPorParceiroAsync(idParceiro);
+            return _mapper.Map<List<CotacaoResponse>>(cotacoes);
         }
 
-        public async void AdicionarCoberturasComFaixaIdade(Cotacao cotacao)
+        private async Task AdicionarCoberturasComFaixaIdadeAsync(Cotacao cotacao)
         {
             int idade = cotacao.ObterIdade();
-            var faixa = await _beeBillingDbContext
-                                .FaixasIdade
-                                .FirstOrDefaultAsync(faixa => idade >= faixa.IdadeMinima && idade <= faixa.IdadeMaxima);
+            var faixaIdade = await _cotacaoRepository.ObterFaixaIdadePorIdadeAsync(idade);
 
-            if (faixa is null)
+            if (!cotacao.Coberturas.Any())
+                throw new InvalidOperationException("Não foram informadas coberturas para essa cotação.");
+
+            if (faixaIdade == null)
                 throw new InvalidOperationException("Faixa de idade não encontrada para a idade informada.");
 
-            foreach (var cobertura in cotacao.Coberturas)
-                cobertura.CalcularValores(faixa.Desconto, faixa.Agravo);
+            if (cotacao.Coberturas == null || !cotacao.Coberturas.Any())
+                throw new InvalidOperationException("É necessário informar ao menos uma cobertura para realizar o cálculo.");
 
-            cotacao.RecalcularPremio();
+            foreach (var cotacaoCobertura in cotacao.Coberturas)
+            {
+                cotacaoCobertura.Cobertura = await _cotacaoRepository.ObterCoberturaPorIdAsync(cotacaoCobertura.IdCobertura);
+
+                if (cotacaoCobertura.Cobertura == null)
+                    throw new InvalidOperationException("Cobertura informada não encontrada.");
+
+                cotacaoCobertura.CalcularValores(faixaIdade.Desconto, faixaIdade.Agravo);
+            }
+
+            cotacao.Premio = RecalcularPremio(cotacao);
         }
+
+        private async Task AdicionarBeneficiariosAsync(Cotacao cotacao)
+        {
+            if (!cotacao.Beneficiarios.Any())
+                return;
+
+            foreach (var beneficiario in cotacao.Beneficiarios)
+            {
+                beneficiario.Parentesco = await _cotacaoRepository.ObterParentescoPorIdAsync(beneficiario.IdParentesco);
+
+                if (beneficiario.Parentesco == null)
+                    throw new InvalidOperationException("Parentesco não encontrado.");
+            }
+        }
+
+        public decimal RecalcularPremio(Cotacao cotacao) =>
+            cotacao.Coberturas.Sum(c => c.ValorTotal);
     }
 }

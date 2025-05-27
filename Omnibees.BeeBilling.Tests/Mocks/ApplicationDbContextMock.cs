@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Omnibees.BeeBilling.Infrastructure.Persistence.Context;
+using Omnibees.BeeBilling.Infrastructure.Persistence.Seed.Configuration;
 
 namespace Omnibees.BeeBilling.Tests.Mocks
 {
@@ -14,6 +15,7 @@ namespace Omnibees.BeeBilling.Tests.Mocks
                 .Options;
 
             Context = new BeeBillingDbContext(options);
+            DbInitializer.Seed(Context);
         }
 
         public void Dispose()

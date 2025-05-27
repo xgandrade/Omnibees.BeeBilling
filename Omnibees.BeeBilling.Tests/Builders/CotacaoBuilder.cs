@@ -27,26 +27,19 @@ namespace Omnibees.BeeBilling.Tests.Builders
 
         public CotacaoBuilder ComCoberturasValidas()
         {
-            List<Cobertura> coberturas =
-            [
-                new ()
+            var coberturas = new List<CotacaoCobertura>
+            {
+                new()
                 {
-                    Id = 1,
-                    Descricao = "Cobertura Básica",
-                    Tipo = TipoCobertura.Basica,
-                    Valor = 1000
+                    IdCobertura = 1
                 },
-                new () 
+                new()
                 {
-                    Id = 2,
-                    Descricao = "Cobertura Adicional",
-                    Tipo = TipoCobertura.Adicional,
-                    Valor = 500
+                    IdCobertura = 2
                 }
-            ];
+            };
 
-            _cotacao.AdicionarCoberturas(coberturas);
-
+            _cotacao.Coberturas = coberturas;
             return this;
         }
 

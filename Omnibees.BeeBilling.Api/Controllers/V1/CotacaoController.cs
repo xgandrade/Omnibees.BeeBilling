@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Omnibees.BeeBilling.Application.Dtos.Cotacao;
-using Omnibees.BeeBilling.Application.Interfaces;
+using Omnibees.BeeBilling.Application.Implementations;
 using Omnibees.BeeBilling.Domain.Entities;
 
 namespace Omnibees.BeeBilling.Api.Controllers.V1
@@ -10,35 +10,26 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class CotacaoController(
-        ICotacaoSeguroVidaService cotacaoService,
-        IParceiroService parceiroService,
+        CotacaoSeguroVidaService cotacaoService,
+        ParceiroService parceiroService,
         IMapper mapper
     ) : ControllerBase
     {
-        private readonly ICotacaoSeguroVidaService _cotacaoService = cotacaoService;
-        private readonly IParceiroService _parceiroService = parceiroService;
+        private readonly CotacaoSeguroVidaService _cotacaoService = cotacaoService;
+        private readonly ParceiroService _parceiroService = parceiroService;
         private readonly IMapper _mapper = mapper;
 
         [HttpPost]
         public async Task<IActionResult> GerarCotacao([FromHeader(Name = "secret")] string secret, [FromBody] CotacaoRequest request)
         {
-            int idParceiro;
-
-            try
-            {
-                idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
-            }
-            catch
-            {
-                return Unauthorized("Secret inválido.");
-            }
+            int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
 
             Cotacao cotacao = _mapper.Map<Cotacao>(request);
             cotacao.IdParceiro = idParceiro;
 
             var response = await _cotacaoService.GerarAsync(cotacao);
 
-            return Ok(response);
+            return Ok(new { id = response.Id });
         }
 
         [HttpPut("{id}")]
@@ -47,14 +38,20 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
             int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
             var response = await _cotacaoService.AlterarAsync(id, request, idParceiro);
 
-            return Ok(response);
+            if (response is null)
+                return BadRequest();
+
+            return NoContent();
         }
 
         [HttpGet]
         public async Task<IActionResult> Listar([FromHeader(Name = "secret")] string secret)
         {
             int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
-            var lista = await _cotacaoService.ListarAsync(idParceiro);
+            var lista = await _cotacaoService.ListarCotacoesAsync(idParceiro);
+
+            if (lista is null)
+                return BadRequest();
 
             return Ok(lista);
         }
@@ -63,9 +60,9 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
         public async Task<IActionResult> Detalhar(int id, [FromHeader(Name = "secret")] string secret)
         {
             int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
-            var cotacao = await _cotacaoService.DetalharAsync(id, idParceiro);
+            var cotacao = await _cotacaoService.DetalharCotacaoAsync(id, idParceiro);
 
-            if (cotacao == null) 
+            if (cotacao is null) 
                 return NotFound();
 
             return Ok(cotacao);
@@ -75,9 +72,12 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
         public async Task<IActionResult> Excluir(int id, [FromHeader(Name = "secret")] string secret)
         {
             int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
-            await _cotacaoService.ExcluirAsync(id, idParceiro);
+            var sucess = await _cotacaoService.ExcluirAsync(id, idParceiro);
 
-            return NoContent();
+            if (sucess)
+                return NoContent();
+
+            return BadRequest();
         }
     }
 }

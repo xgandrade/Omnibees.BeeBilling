@@ -30,9 +30,7 @@ namespace Omnibees.BeeBilling.Application.Extensions
         private static void RegisterServices(IServiceCollection services, Assembly assembly)
         {
             var types = assembly.GetTypes()
-                .Where(t => t.IsClass
-                            && !t.IsAbstract
-                            && t.Name.EndsWith("Service"))
+                .Where(t => t.IsClass && !t.IsAbstract && t.Name.EndsWith("Service"))
                 .ToList();
 
             foreach (var implementationType in types)
@@ -42,6 +40,8 @@ namespace Omnibees.BeeBilling.Application.Extensions
 
                 if (interfaceType is not null)
                     services.AddScoped(interfaceType, implementationType);
+                else
+                    services.AddScoped(implementationType);
             }
         }
     }

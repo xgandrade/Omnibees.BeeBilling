@@ -16,6 +16,24 @@ namespace Omnibees.BeeBilling.Infrastructure.Persistence.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Cotacao>()
+                .HasOne(cotacao => cotacao.Parceiro)
+                .WithMany()
+                .HasForeignKey(cotacao => cotacao.IdParceiro);
+
+            modelBuilder.Entity<Cotacao>()
+                .HasOne(cotacao => cotacao.Produto)
+                .WithMany()
+                .HasForeignKey(cotacao => cotacao.IdProduto);
+
+            modelBuilder.Entity<Cotacao>()
+                .Property(cotacao => cotacao.Premio)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Cotacao>()
+                .Property(cotacao => cotacao.ImportanciaSegurada)
+                .HasPrecision(18, 2);
+
             modelBuilder.Entity<Cobertura>()
                 .Property(cobertura => cobertura.Valor)
                 .HasPrecision(18, 6);

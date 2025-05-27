@@ -1,4 +1,6 @@
-﻿namespace Omnibees.BeeBilling.Application.Dtos.Cotacao
+﻿using Omnibees.BeeBilling.Domain.Entities.Enums;
+
+namespace Omnibees.BeeBilling.Application.Dtos.Cotacao
 {
     public class CotacaoRequest
     {
@@ -10,20 +12,19 @@
         public int? Telefone { get; set; }
         public string Endereco { get; set; } = null!;
         public string CEP { get; set; } = null!;
-        public List<CotacaoCoberturaRequest> Coberturas { get; set; } = [];
+        public List<CoberturaRequest> Coberturas { get; set; } = [];
         public List<CotacaoBeneficiarioRequest> Beneficiarios { get; set; } = [];
     }
 
-    public class CotacaoCoberturaRequest
+    public class CoberturaRequest
     {
-        public decimal ValorDesconto { get; set; }
-        public decimal ValorAgravo { get; set; }
-        public decimal ValorTotal { get; set; }
+        public int IdCobertura { get; set; }
+        public TipoCobertura Tipo { get; set; }
     }
 
     public class CotacaoBeneficiarioRequest
     {
+        public int IdParentesco { get; set; }
         public string Nome { get; set; } = null!;
-        public decimal Percentual { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Omnibees.BeeBilling.Domain.Entities.Common;
 using Omnibees.BeeBilling.Domain.Entities.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Omnibees.BeeBilling.Domain.Entities
 {
@@ -23,13 +24,15 @@ namespace Omnibees.BeeBilling.Domain.Entities
         public DateTime DataAtualizacao { get; set; }
 
         [Required]
+        [ForeignKey("idProduto")]
         public int IdProduto { get; set; }
 
         [Required]
+        [ForeignKey("idParceiro")]
         public int IdParceiro { get; set; }
 
-        public int DDD { get; set; }
-        public int Telefone { get; set; }
+        public int? DDD { get; set; }
+        public int? Telefone { get; set; }
 
         [Required, MaxLength(255)]
         public string Endereco { get; set; }
@@ -79,7 +82,7 @@ namespace Omnibees.BeeBilling.Domain.Entities
             if (duplicadas.Any())
                 throw new InvalidOperationException("Não é permitido adicionar coberturas repetidas.");
         }
-
+               
         public void RecalcularPremio() => Premio = Coberturas.Sum(c => c.ValorTotal);
 
         public void AdicionarCoberturas(List<Cobertura> coberturas)
@@ -92,6 +95,7 @@ namespace Omnibees.BeeBilling.Domain.Entities
                 var cotacaoCobertura = new CotacaoCobertura
                 {
                     IdCobertura = cobertura.Id,
+                    IdCotacao = Id,
                     Cobertura = cobertura,
                     Cotacao = this
                 };
