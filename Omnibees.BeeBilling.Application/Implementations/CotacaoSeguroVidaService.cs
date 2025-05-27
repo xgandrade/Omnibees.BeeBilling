@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Omnibees.BeeBilling.Application.Dtos.Cotacao;
+using Omnibees.BeeBilling.Application.Interfaces;
 using Omnibees.BeeBilling.Domain.Entities;
 using Omnibees.BeeBilling.Domain.Interfaces;
 
 namespace Omnibees.BeeBilling.Application.Implementations
 {
-    public class CotacaoSeguroVidaService(IMapper mapper, ICotacaoRepository cotacaoRepository)
+    public class CotacaoSeguroVidaService(IMapper mapper, ICotacaoRepository cotacaoRepository) : ICotacaoSeguroVidaService
     {
         private readonly IMapper _mapper = mapper;
         private readonly ICotacaoRepository _cotacaoRepository = cotacaoRepository;
@@ -19,7 +20,7 @@ namespace Omnibees.BeeBilling.Application.Implementations
 
             _mapper.Map(request, cotacao);
 
-            await AdicionarCoberturasComFaixaIdadeAsync(cotacao);
+            await AplicarFaixaEtariaECalcularValoresAsync(cotacao);
             await _cotacaoRepository.SaveChangesAsync();
 
             return _mapper.Map<CotacaoResponse>(cotacao);
@@ -28,7 +29,7 @@ namespace Omnibees.BeeBilling.Application.Implementations
         public async Task<CotacaoDetalhesResponse?> DetalharCotacaoAsync(int id, int idParceiro)
         {
             var cotacao = await _cotacaoRepository.ObterComRelacionamentosPorIdAsync(id, idParceiro);
-            return cotacao is null ? null : _mapper.Map<CotacaoDetalhesResponse>(cotacao);
+            return _mapper.Map<CotacaoDetalhesResponse>(cotacao);
         }
 
         public async Task<bool> ExcluirAsync(int id, int idParceiro)
@@ -43,9 +44,12 @@ namespace Omnibees.BeeBilling.Application.Implementations
             return true;
         }
 
-        public async Task<CotacaoResponse> GerarAsync(Cotacao cotacao)
+        public async Task<CotacaoResponse> GerarAsync(int idParceiro, CotacaoRequest cotacaoRequest)
         {
-            await AdicionarCoberturasComFaixaIdadeAsync(cotacao);
+            Cotacao cotacao = _mapper.Map<Cotacao>(cotacaoRequest);
+            cotacao.IdParceiro = idParceiro;
+
+            await AplicarFaixaEtariaECalcularValoresAsync(cotacao);
             await AdicionarBeneficiariosAsync(cotacao);
 
             await _cotacaoRepository.AdicionarAsync(cotacao);
@@ -60,7 +64,7 @@ namespace Omnibees.BeeBilling.Application.Implementations
             return _mapper.Map<List<CotacaoResponse>>(cotacoes);
         }
 
-        private async Task AdicionarCoberturasComFaixaIdadeAsync(Cotacao cotacao)
+        public async Task AplicarFaixaEtariaECalcularValoresAsync(Cotacao cotacao)
         {
             int idade = cotacao.ObterIdade();
             var faixaIdade = await _cotacaoRepository.ObterFaixaIdadePorIdadeAsync(idade);

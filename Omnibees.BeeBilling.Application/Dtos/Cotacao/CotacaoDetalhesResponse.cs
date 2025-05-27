@@ -18,16 +18,4 @@
         public List<CotacaoCoberturaResponse> Coberturas { get; set; } = [];
         public List<CotacaoBeneficiarioResponse> Beneficiarios { get; set; } = [];
     }
-
-    public class CotacaoCoberturaResponse
-    {
-        public int IdCobertura { get; set; }
-        public decimal ValorTotal { get; set; }
-    }
-
-    public class CotacaoBeneficiarioResponse
-    {
-        public string Nome { get; set; } = null!;
-        public decimal Percentual { get; set; }
-    }
 }

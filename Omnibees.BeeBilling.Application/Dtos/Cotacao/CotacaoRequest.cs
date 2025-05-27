@@ -1,4 +1,5 @@
-﻿using Omnibees.BeeBilling.Domain.Entities.Enums;
+﻿using Omnibees.BeeBilling.Application.Dtos.Beneficiario;
+using Omnibees.BeeBilling.Application.Dtos.Cobertura;
 
 namespace Omnibees.BeeBilling.Application.Dtos.Cotacao
 {
@@ -13,18 +14,6 @@ namespace Omnibees.BeeBilling.Application.Dtos.Cotacao
         public string Endereco { get; set; } = null!;
         public string CEP { get; set; } = null!;
         public List<CoberturaRequest> Coberturas { get; set; } = [];
-        public List<CotacaoBeneficiarioRequest> Beneficiarios { get; set; } = [];
-    }
-
-    public class CoberturaRequest
-    {
-        public int IdCobertura { get; set; }
-        public TipoCobertura Tipo { get; set; }
-    }
-
-    public class CotacaoBeneficiarioRequest
-    {
-        public int IdParentesco { get; set; }
-        public string Nome { get; set; } = null!;
+        public List<BeneficiarioRequest> Beneficiarios { get; set; } = [];
     }
 }

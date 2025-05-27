@@ -9,18 +9,22 @@ namespace Omnibees.BeeBilling.Infrastructure.Persistence.Implementations
     {
         private readonly BeeBillingDbContext _context = context;
 
-        public async Task AdicionarAsync(Cobertura cobertura) 
-            => await _context.Coberturas.AddAsync(cobertura);
+        public async Task AdicionarAsync(Cotacao cotacao, int idCobertura)
+        {
+            var cobertura = await ObterPorIdAsync(idCobertura);
+            cotacao.AdicionarCobertura(cobertura);
+        }
 
         public async Task<Cobertura?> ObterPorIdAsync(int id)
             => await _context.Coberturas.FirstOrDefaultAsync(cobertura => cobertura.Id == id);
 
-        public Task SaveChangesAsync() 
-            => _context.SaveChangesAsync();
+        public async Task SaveChangesAsync() 
+            => await _context.SaveChangesAsync();
 
         public Task RemoverAsync(Cobertura cobertura)
         {
             _context.Coberturas.Remove(cobertura);
+            _context.SaveChanges();
             return Task.CompletedTask;
         }
     }

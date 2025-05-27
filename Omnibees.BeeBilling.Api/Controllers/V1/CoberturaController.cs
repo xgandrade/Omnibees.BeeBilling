@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Omnibees.BeeBilling.Application.Dtos.Cotacao;
+﻿using Microsoft.AspNetCore.Mvc;
+using Omnibees.BeeBilling.Application.Dtos.Cobertura;
 using Omnibees.BeeBilling.Application.Implementations;
-using Omnibees.BeeBilling.Domain.Entities;
 
 namespace Omnibees.BeeBilling.Api.Controllers.V1
 {
@@ -11,23 +9,45 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
     [Route("api/v{version:apiVersion}/[controller]")]
     public class CoberturaController(
         CoberturaService coberturaService,
-        IMapper mapper) : ControllerBase
+        ParceiroService parceiroService) : ControllerBase
     {
         private readonly CoberturaService _coberturaService = coberturaService;
-        private readonly IMapper _mapper = mapper;
+        private readonly ParceiroService _parceiroService = parceiroService;
 
-        [HttpPost]
-        public async Task<IActionResult> NovaCobertura([FromBody] CoberturaRequest request)
+        [HttpPost("{idCotacao}")]
+        public async Task<IActionResult> NovaCobertura(
+            [FromHeader(Name = "secret")] string secret,
+            int idCotacao,
+            [FromBody] CoberturaRequest request)
         {
-            Cobertura cobertura = _mapper.Map<Cobertura>(request);
-            var response = await _coberturaService.NovaCoberturaAsync(cobertura);
+            int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
+            var sucess = await _coberturaService.NovaCoberturaAsync(idParceiro, idCotacao, request.IdCobertura);
+
+            if (!sucess)
+                return NotFound();
 
             return NoContent();
         }
 
-        // /api/v1/cotacao/{idCotacao}/coberturas
-        // POST → inclui nova cobertura.
-        // GET → lista coberturas.
-        // DELETE /{ id} → exclui cobertura.
+        [HttpGet("{idCotacao}")]
+        public async Task<IActionResult> ListarCoberturas([FromHeader(Name = "secret")] string secret, int idCotacao)
+        {
+            int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
+            var coberturaCotacao = await _coberturaService.ListarCoberturasPorCotacao(idParceiro, idCotacao);
+
+            return Ok(coberturaCotacao);
+        }
+
+        [HttpDelete("{idCotacao}/{id}")]
+        public async Task<IActionResult> Excluir(int idCotacao, int id, [FromHeader(Name = "secret")] string secret)
+        {
+            int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
+
+            var sucess = await _coberturaService.RemoverCoberturaAsync(idParceiro, idCotacao, id);
+            if (!sucess)
+                return NotFound();
+
+            return NoContent();
+        }
     }
 }

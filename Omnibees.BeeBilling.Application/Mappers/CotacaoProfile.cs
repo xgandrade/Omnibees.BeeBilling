@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Omnibees.BeeBilling.Application.Dtos.Beneficiario;
+using Omnibees.BeeBilling.Application.Dtos.Cobertura;
 using Omnibees.BeeBilling.Application.Dtos.Cotacao;
 using Omnibees.BeeBilling.Domain.Entities;
 
@@ -39,7 +41,7 @@ namespace Omnibees.BeeBilling.Application.Mappers
             // Mapeia CotacaoBeneficiarioRequest para CotacaoBeneficiario.
             // Aqui mapeamos os campos Nome e Percentual; as referências a Cotacao
             // e os identificadores são ignorados.
-            CreateMap<CotacaoBeneficiarioRequest, CotacaoBeneficiario>()
+            CreateMap<BeneficiarioRequest, CotacaoBeneficiario>()
                 .ForMember(dest => dest.IdParentesco, opt => opt.MapFrom(src => src.IdParentesco))
                 .ForMember(dest => dest.Nome, opt => opt.MapFrom(src => src.Nome))
                 .ForMember(dest => dest.Percentual, opt => opt.Ignore())
@@ -68,6 +70,10 @@ namespace Omnibees.BeeBilling.Application.Mappers
                 .ForMember(dest => dest.NomeSegurado, opt => opt.MapFrom(src => src.NomeSegurado))
                 .ForMember(dest => dest.Documento, opt => opt.MapFrom(src => src.Documento))
                 .ForMember(dest => dest.IdProduto, opt => opt.MapFrom(src => src.IdProduto));
+
+            // Mapeia Cotacao para CotacaoResponse (um mapeamento resumido).
+            CreateMap<Cotacao, CoberturasCotacaoDetalhesResponse>()
+                .ForMember(dest => dest.Coberturas, opt => opt.MapFrom(src => src.Coberturas));
         }
     }
 }

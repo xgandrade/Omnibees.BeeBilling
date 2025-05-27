@@ -1,8 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Omnibees.BeeBilling.Application.Dtos.Cotacao;
 using Omnibees.BeeBilling.Application.Implementations;
-using Omnibees.BeeBilling.Domain.Entities;
+using Omnibees.BeeBilling.Application.Interfaces;
 
 namespace Omnibees.BeeBilling.Api.Controllers.V1
 {
@@ -10,24 +9,17 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class CotacaoController(
-        CotacaoSeguroVidaService cotacaoService,
-        ParceiroService parceiroService,
-        IMapper mapper
-    ) : ControllerBase
+        ICotacaoSeguroVidaService cotacaoService,
+        ParceiroService parceiroService) : ControllerBase
     {
-        private readonly CotacaoSeguroVidaService _cotacaoService = cotacaoService;
+        private readonly ICotacaoSeguroVidaService _cotacaoService = cotacaoService;
         private readonly ParceiroService _parceiroService = parceiroService;
-        private readonly IMapper _mapper = mapper;
 
         [HttpPost]
         public async Task<IActionResult> GerarCotacao([FromHeader(Name = "secret")] string secret, [FromBody] CotacaoRequest request)
         {
             int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
-
-            Cotacao cotacao = _mapper.Map<Cotacao>(request);
-            cotacao.IdParceiro = idParceiro;
-
-            var response = await _cotacaoService.GerarAsync(cotacao);
+            var response = await _cotacaoService.GerarAsync(idParceiro, request);
 
             return Ok(new { id = response.Id });
         }
@@ -60,12 +52,12 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
         public async Task<IActionResult> Detalhar(int id, [FromHeader(Name = "secret")] string secret)
         {
             int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
-            var cotacao = await _cotacaoService.DetalharCotacaoAsync(id, idParceiro);
+            var cotacaoResponse = await _cotacaoService.DetalharCotacaoAsync(id, idParceiro);
 
-            if (cotacao is null) 
+            if (cotacaoResponse is null) 
                 return NotFound();
 
-            return Ok(cotacao);
+            return Ok(cotacaoResponse);
         }
 
         [HttpDelete("{id}")]
