@@ -13,8 +13,9 @@ namespace Omnibees.BeeBilling.Infrastructure.Persistence.Implementations
         {
             return await _context.Cotacoes
                 .Include(c => c.Coberturas)
-                .ThenInclude(cc => cc.Cobertura)
+                    .ThenInclude(cc => cc.Cobertura)
                 .Include(c => c.Beneficiarios)
+                    .ThenInclude(b => b.Parentesco)
                 .FirstOrDefaultAsync(c => c.Id == id && c.IdParceiro == idParceiro);
         }
 
@@ -22,7 +23,7 @@ namespace Omnibees.BeeBilling.Infrastructure.Persistence.Implementations
         {
             return await _context.Cotacoes
                 .Include(c => c.Coberturas)
-                .ThenInclude(cc => cc.Cobertura)
+                    .ThenInclude(cc => cc.Cobertura)
                 .Include(c => c.Beneficiarios)
                 .Where(c => c.IdParceiro == idParceiro)
                 .ToListAsync();

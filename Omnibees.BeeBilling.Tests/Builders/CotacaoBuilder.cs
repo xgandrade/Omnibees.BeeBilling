@@ -1,5 +1,4 @@
 ﻿using Omnibees.BeeBilling.Domain.Entities;
-using Omnibees.BeeBilling.Domain.Entities.Enums;
 
 namespace Omnibees.BeeBilling.Tests.Builders
 {
@@ -40,6 +39,18 @@ namespace Omnibees.BeeBilling.Tests.Builders
             };
 
             _cotacao.Coberturas = coberturas;
+            return this;
+        }
+
+        public CotacaoBuilder ComCoberturas(List<Cobertura> coberturas)
+        {
+            var cotacaoCoberturas = coberturas.Select(c => new CotacaoCobertura
+            {
+                IdCobertura = c.Id,
+                Cobertura = c
+            }).ToList();
+
+            _cotacao.Coberturas = cotacaoCoberturas;
             return this;
         }
 

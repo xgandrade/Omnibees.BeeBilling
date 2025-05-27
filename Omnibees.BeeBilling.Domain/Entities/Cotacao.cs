@@ -113,5 +113,14 @@ namespace Omnibees.BeeBilling.Domain.Entities
             ValidarCoberturas();
             RecalcularPremio();
         }
+
+        public void RemoverBeneficiario(int idBeneficiario)
+        {
+            var beneficiario = Beneficiarios.FirstOrDefault(beneficiario => beneficiario.Id == idBeneficiario);
+            if (beneficiario is null)
+                throw new InvalidOperationException("Beneficiario não encontrado.");
+
+            Beneficiarios.Remove(beneficiario);
+        }
     }
 }

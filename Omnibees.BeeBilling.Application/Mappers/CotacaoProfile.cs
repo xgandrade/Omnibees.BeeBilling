@@ -62,7 +62,9 @@ namespace Omnibees.BeeBilling.Application.Mappers
 
             // Mapeia CotacaoBeneficiario para CotacaoBeneficiarioResponse.
             CreateMap<CotacaoBeneficiario, CotacaoBeneficiarioResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Nome, opt => opt.MapFrom(src => src.Nome))
+                .ForMember(dest => dest.Parentesco, opt => opt.MapFrom(src => src.Parentesco.Descricao))
                 .ForMember(dest => dest.Percentual, opt => opt.MapFrom(src => src.Percentual));
 
             // Mapeia Cotacao para CotacaoResponse (um mapeamento resumido).
@@ -74,6 +76,9 @@ namespace Omnibees.BeeBilling.Application.Mappers
             // Mapeia Cotacao para CotacaoResponse (um mapeamento resumido).
             CreateMap<Cotacao, CoberturasCotacaoDetalhesResponse>()
                 .ForMember(dest => dest.Coberturas, opt => opt.MapFrom(src => src.Coberturas));
+
+            CreateMap<Cotacao, BeneficiariosCotacaoDetalhesResponse>()
+                .ForMember(dest => dest.Beneficiarios, opt => opt.MapFrom(src => src.Beneficiarios));
         }
     }
 }

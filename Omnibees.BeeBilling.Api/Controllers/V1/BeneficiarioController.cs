@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Omnibees.BeeBilling.Application.Implementations;
 
 namespace Omnibees.BeeBilling.Api.Controllers.V1
@@ -9,17 +8,30 @@ namespace Omnibees.BeeBilling.Api.Controllers.V1
     [Route("api/v{version:apiVersion}/[controller]")]
     public class BeneficiarioController(
         BeneficiarioService beneficiarioService,
-        ParceiroService parceiroService,
-        IMapper mapper) : ControllerBase
+        ParceiroService parceiroService) : ControllerBase
     {
         private readonly BeneficiarioService _beneficiarioService = beneficiarioService;
         private readonly ParceiroService _parceiroService = parceiroService;
-        private readonly IMapper _mapper = mapper;
 
-        // /api/v1/cotacao/{idCotacao}/beneficiarios
-        // PUT → altera todos os beneficiários de uma cotação.
-        // GET → lista os beneficiários.
-        // GET /{id} → detalha um beneficiário.
-        // DELETE /{id} → exclui um beneficiário.
+        [HttpGet("{idCotacao}")]
+        public async Task<IActionResult> ListarBeneficiarios([FromHeader(Name = "secret")] string secret, int idCotacao)
+        {
+            int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
+            var beneficiariosCotacao = await _beneficiarioService.ListarBeneficiariosPorCotacao(idParceiro, idCotacao);
+
+            return Ok(beneficiariosCotacao);
+        }
+
+        [HttpDelete("{idCotacao}/{id}")]
+        public async Task<IActionResult> Excluir(int idCotacao, int id, [FromHeader(Name = "secret")] string secret)
+        {
+            int idParceiro = await _parceiroService.ObterIdParceiroAsync(secret);
+
+            var sucess = await _beneficiarioService.RemoverBeneficiarioAsync(idParceiro, idCotacao, id);
+            if (!sucess)
+                return NotFound();
+
+            return NoContent();
+        }
     }
 }

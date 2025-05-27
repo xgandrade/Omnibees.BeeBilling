@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Omnibees.BeeBilling.Application.Dtos.Cobertura;
-using Omnibees.BeeBilling.Application.Dtos.Cotacao;
 using Omnibees.BeeBilling.Application.Interfaces;
-using Omnibees.BeeBilling.Domain.Entities;
 using Omnibees.BeeBilling.Domain.Interfaces;
 
 namespace Omnibees.BeeBilling.Application.Implementations
